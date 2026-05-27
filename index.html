@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="bn" dir="ltr">
+<!--
+  =============================================================================
+  FLASHCART PARTNER PORTAL — Business Management Dashboard
+  =============================================================================
+  
+  Partner-specific HTML shell with OneSignal SDK integration.
+  OneSignal Web Push SDK loads ONLY in this application.
+  
+  The partner portal serves as the control center for FlashCart vendors:
+  - Real-time order management with 9-layer notification system
+  - Menu and product management
+  - Store profile and SEO optimization
+  - Analytics and revenue tracking
+  - Certificate earning and business programs
+  
+  Developer: Rizwan Rahim Chowdhury
+  Powered by: Bangladesh Software Development Community (BSDC)
+  =============================================================================
+-->
+<head>
+  <!-- ================================================================== -->
+  <!-- CHARACTER ENCODING & VIEWPORT                                      -->
+  <!-- ================================================================== -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <!-- ================================================================== -->
+  <!-- PRIMARY SEO META TAGS                                               -->
+  <!-- ================================================================== -->
+  <title>FlashCart Partner Portal - Manage Your Business | Free Delivery Platform Bangladesh</title>
+  <meta name="description" content="FlashCart Partner Portal - Manage your store, orders, menu, and analytics on Bangladesh's free delivery platform. Join FlashCart for free and reach thousands of customers. Cash on Delivery. ফ্ল্যাশকার্ট পার্টনার পোর্টাল।" />
+  <meta name="keywords" content="FlashCart partner, business dashboard, store management, food delivery partner Bangladesh, free delivery platform, sell online Bangladesh, ফ্ল্যাশকার্ট পার্টনার" />
+  <meta name="author" content="Rizwan Rahim Chowdhury" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://partner.flashcart.bsdc.info.bd/" />
+
+  <!-- ================================================================== -->
+  <!-- HREFLANG                                                            -->
+  <!-- ================================================================== -->
+  <link rel="alternate" hreflang="bn" href="https://partner.flashcart.bsdc.info.bd/?lang=bn" />
+  <link rel="alternate" hreflang="en" href="https://partner.flashcart.bsdc.info.bd/?lang=en" />
+  <link rel="alternate" hreflang="x-default" href="https://partner.flashcart.bsdc.info.bd/" />
+
+  <!-- ================================================================== -->
+  <!-- OPEN GRAPH                                                          -->
+  <!-- ================================================================== -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="FlashCart Partner Portal - Manage Your Business" />
+  <meta property="og:description" content="Join FlashCart for free. Manage orders, menu, store profile, and analytics. Cash on Delivery platform for Bangladesh." />
+  <meta property="og:url" content="https://partner.flashcart.bsdc.info.bd/" />
+  <meta property="og:site_name" content="FlashCart Partner" />
+  <meta property="og:locale" content="bn_BD" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:image" content="https://flashcart.bsdc.info.bd/icon-512x512.png" />
+
+  <!-- ================================================================== -->
+  <!-- TWITTER CARD                                                        -->
+  <!-- ================================================================== -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="FlashCart Partner Portal" />
+  <meta name="twitter:description" content="Manage your store on Bangladesh's free delivery platform." />
+  <meta name="twitter:image" content="https://flashcart.bsdc.info.bd/icon-512x512.png" />
+
+  <!-- ================================================================== -->
+  <!-- FAVICON & APP ICONS                                                 -->
+  <!-- ================================================================== -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+  <!-- ================================================================== -->
+  <!-- PWA MANIFEST & THEME                                                -->
+  <!-- ================================================================== -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#1B5E20" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="FlashCart Partner" />
+
+  <!-- ================================================================== -->
+  <!-- PRECONNECT                                                          -->
+  <!-- ================================================================== -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://firestore.googleapis.com" />
+  <link rel="preconnect" href="https://flashcart-bd-default-rtdb.asia-southeast1.firebasedatabase.app" />
+  <link rel="preconnect" href="https://api.imgbb.com" />
+  <link rel="preconnect" href="https://onesignal.com" />
+  <link rel="preconnect" href="https://cdn.onesignal.com" />
+  <link rel="dns-prefetch" href="https://nominatim.openstreetmap.org" />
+
+  <!-- ================================================================== -->
+  <!-- GOOGLE FONTS                                                        -->
+  <!-- ================================================================== -->
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- ================================================================== -->
+  <!-- LEAFLET CSS                                                         -->
+  <!-- ================================================================== -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+  <!-- ================================================================== -->
+  <!-- ONESIGNAL WEB PUSH SDK — PARTNER PORTAL ONLY                       -->
+  <!-- ================================================================== -->
+  <!-- 
+    OneSignal is loaded ONLY in the partner portal for push notifications.
+    The customer portal and docs portal do NOT include this script.
+    
+    Flow: 
+    1. SDK loads and initializes with our App ID
+    2. Partner grants notification permission
+    3. OneSignal assigns a Player ID
+    4. Player ID is saved to Firestore under partner's document
+    5. When new order arrives, we call OneSignal REST API with that Player ID
+    6. Partner receives push notification even when browser is closed
+  -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+
+  <!-- ================================================================== -->
+  <!-- SCHEMA.ORG JSON-LD — Partner Portal                                -->
+  <!-- ================================================================== -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "FlashCart Partner Portal",
+    "alternateName": "ফ্ল্যাশকার্ট পার্টনার পোর্টাল",
+    "url": "https://partner.flashcart.bsdc.info.bd",
+    "description": "Business management dashboard for FlashCart delivery partners in Bangladesh. Manage orders, menu, analytics, and store profile.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web Browser",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "BDT",
+      "description": "Free to use for all businesses in Bangladesh"
+    },
+    "creator": {
+      "@type": "Organization",
+      "name": "Bangladesh Software Development Community",
+      "url": "https://www.bsdc.info.bd"
+    }
+  }
+  </script>
+
+  <!-- ================================================================== -->
+  <!-- CRITICAL INLINE CSS                                                 -->
+  <!-- ================================================================== -->
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --color-primary: #1B5E20;
+      --color-primary-light: #2E7D32;
+      --color-white: #FFFFFF;
+      --color-off-white: #F8FAF8;
+      --color-text-primary: #1A1A1A;
+      --font-bangla: 'Hind Siliguri', 'SolaimanLipi', sans-serif;
+      --font-english: 'Inter', 'Segoe UI', sans-serif;
+    }
+
+    body {
+      font-family: var(--font-bangla);
+      background-color: var(--color-off-white);
+      color: var(--color-text-primary);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    #root {
+      min-height: 100vh;
+    }
+
+    .app-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1B5E20 0%, #2E7D32 50%, #388E3C 100%);
+      color: var(--color-white);
+      font-family: var(--font-english);
+    }
+
+    .app-loading__logo {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 24px;
+      animation: pulse-loading 1.5s ease-in-out infinite;
+    }
+
+    .app-loading__text {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+
+    .app-loading__badge {
+      font-size: 12px;
+      background: rgba(255,255,255,0.2);
+      padding: 2px 12px;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .app-loading__subtext {
+      font-size: 14px;
+      opacity: 0.8;
+      font-family: var(--font-bangla);
+    }
+
+    .app-loading__spinner {
+      width: 40px;
+      height: 40px;
+      margin-top: 32px;
+      border: 3px solid rgba(255, 255, 255, 0.2);
+      border-top-color: var(--color-white);
+      border-radius: 50%;
+      animation: spin-loading 0.8s linear infinite;
+    }
+
+    @keyframes pulse-loading {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.9; }
+    }
+
+    @keyframes spin-loading {
+      to { transform: rotate(360deg); }
+    }
+
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: 16px;
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 8px 16px;
+      border-radius: 0 0 4px 4px;
+      z-index: 10000;
+      font-size: 14px;
+      text-decoration: none;
+      transition: top 0.2s;
+    }
+
+    .skip-link:focus {
+      top: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <div id="root">
+    <div class="app-loading" aria-label="Loading FlashCart Partner Portal">
+      <svg class="app-loading__logo" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="10" y="20" width="60" height="40" rx="8" fill="rgba(255,255,255,0.15)" stroke="white" stroke-width="2.5"/>
+        <path d="M44 18L32 42h10L36 62l16-26H42L48 18h-4z" fill="white"/>
+        <circle cx="28" cy="66" r="5" fill="white" opacity="0.9"/>
+        <circle cx="52" cy="66" r="5" fill="white" opacity="0.9"/>
+        <path d="M10 24L4 12" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <div class="app-loading__text">FlashCart</div>
+      <div class="app-loading__badge">Partner Portal</div>
+      <div class="app-loading__subtext">Loading your dashboard...</div>
+      <div class="app-loading__spinner" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <noscript>
+    <div style="max-width:800px;margin:40px auto;padding:20px;font-family:'Hind Siliguri',sans-serif;line-height:1.8;">
+      <h1 style="color:#1B5E20;">FlashCart Partner Portal</h1>
+      <h2 style="color:#1B5E20;">ফ্ল্যাশকার্ট পার্টনার পোর্টাল</h2>
+      <p>Manage your store, orders, menu, and analytics on Bangladesh's free delivery platform. Join FlashCart for free and start selling to thousands of customers.</p>
+      <p>বাংলাদেশের বিনামূল্যে ডেলিভারি প্ল্যাটফর্মে আপনার দোকান, অর্ডার, মেনু এবং বিশ্লেষণ পরিচালনা করুন।</p>
+      <h3>Partner Features</h3>
+      <ul>
+        <li>Real-time order notifications</li>
+        <li>Menu and product management</li>
+        <li>Store profile and SEO optimization</li>
+        <li>Analytics and revenue tracking</li>
+        <li>Certificate earning programs</li>
+        <li>Invoice generation</li>
+      </ul>
+      <p>Please enable JavaScript to use FlashCart Partner Portal.</p>
+      <p><a href="https://www.bsdc.info.bd" style="color:#1B5E20;">Powered by Bangladesh Software Development Community (BSDC)</a></p>
+    </div>
+  </noscript>
+
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>
