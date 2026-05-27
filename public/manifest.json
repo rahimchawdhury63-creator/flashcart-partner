@@ -1,0 +1,108 @@
+{
+  "name": "FlashCart Partner Portal - Business Dashboard",
+  "short_name": "FlashCart Partner",
+  "description": "Manage your store, orders, menu, and analytics on Bangladesh's free delivery platform. Real-time order notifications.",
+  "start_url": "/",
+  "id": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#1B5E20",
+  "background_color": "#FFFFFF",
+  "lang": "bn",
+  "dir": "ltr",
+  "categories": ["business", "productivity"],
+  "scope": "/",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/maskable-icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "url": "/dashboard",
+      "description": "View your business dashboard and today's orders"
+    },
+    {
+      "name": "Manage Orders",
+      "short_name": "Orders",
+      "url": "/orders",
+      "description": "Manage incoming and active orders"
+    },
+    {
+      "name": "Menu Manager",
+      "short_name": "Menu",
+      "url": "/menu",
+      "description": "Add and edit menu items and categories"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "FlashCart Partner Dashboard - Desktop View"
+    },
+    {
+      "src": "/screenshot-narrow.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "FlashCart Partner Dashboard - Mobile View"
+    }
+  ]
+}
