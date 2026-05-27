@@ -1,30 +1,40 @@
 // ============================================================
 // FlashCart — Partner Business Portal Entry Point
+// CORRECTED VERSION — replaces Step 2 main.jsx
+//
+// Partner portal uses the same RouterProvider pattern.
+// Additional difference from main portal:
+// - Imports partner.css for dashboard-specific styles
+// - Partner router will be defined in Step 29
+// - For now, uses a placeholder router that will be replaced
+//
 // Developer: Rizwan Rahim Chowdhury
 // Powered by: Bangladesh Software Development Community (bsdc.info.bd)
 // ============================================================
 
-// React 18 core import
+// React 18 core
 import React from 'react';
 
-// React 18 concurrent rendering API
+// React 18 concurrent rendering
 import { createRoot } from 'react-dom/client';
 
-// Browser-based routing for clean URL navigation
-import { BrowserRouter } from 'react-router-dom';
+// RouterProvider — replaces BrowserRouter
+import { RouterProvider } from 'react-router-dom';
 
-// React Helmet Async for dynamic SEO meta tags per route
+// HelmetProvider for per-page SEO meta tags
 import { HelmetProvider } from 'react-helmet-async';
 
-// Partner portal root component
-import App from './App';
+// Partner portal router — WILL BE CREATED IN STEP 29
+// For now, create a placeholder: src/router.jsx with minimal content
+// (see placeholder instructions below this file)
+import router from './router';
 
-// ── GLOBAL STYLES (same design system as main portal) ────────
+// ── GLOBAL STYLES ──────────────────────────────────────────
 
-// CSS custom properties — design tokens (colors, spacing, etc.)
+// Design tokens — CSS custom properties (must be first)
 import './styles/design-tokens.css';
 
-// Base reset and global element styles
+// CSS reset and base element styles
 import './styles/global.css';
 
 // Typography scale and font definitions
@@ -42,40 +52,76 @@ import './styles/responsive.css';
 // Fabric CSS grid system
 import './styles/fabric.css';
 
-// Partner portal specific styles (dashboard layouts, sidebar, etc.)
+// Partner portal specific styles
+// (dashboard layouts, sidebar, data tables, widgets)
 import './styles/partner.css';
 
-// ── MOUNT APPLICATION ─────────────────────────────────────────
+// ── ROOT ELEMENT ──────────────────────────────────────────
 
-// Get root DOM element — defined in index.html
+// Get the React mount point from index.html
 const rootElement = document.getElementById('root');
 
-// Fail fast with clear error if root missing
+// Fail fast if root element is missing
 if (!rootElement) {
   throw new Error(
-    'FlashCart Partner: Root element #root not found. ' +
-    'Check index.html for <div id="root"></div>'
+    '[FlashCart Partner] Root element #root not found in index.html. ' +
+    'Ensure index.html contains <div id="root"></div>.'
   );
 }
 
-// Create React 18 concurrent root
+// ── CREATE REACT 18 ROOT ──────────────────────────────────
+
+// Concurrent root for React 18 features
 const root = createRoot(rootElement);
 
-// Render partner portal with providers
+// ── RENDER ───────────────────────────────────────────────
+
 root.render(
+  // StrictMode for development checks
   <React.StrictMode>
-    {/* HelmetProvider for per-route meta tag management */}
+
+    {/* HelmetProvider — SEO meta tags for every partner page */}
     <HelmetProvider>
-      {/* BrowserRouter for URL-based navigation */}
-      <BrowserRouter
-        future={{
-          v7_startTransition: true,
-          v7_relativeSplatPath: true,
-        }}
-      >
-        {/* Partner App with all context providers and protected routes */}
-        <App />
-      </BrowserRouter>
+
+      {/* RouterProvider — partner portal routes from Step 29 */}
+      <RouterProvider
+        router={router}
+
+        // Router initialization fallback
+        fallbackElement={
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '100vh',
+              background: '#FAFAFA',
+              fontFamily: 'Inter, sans-serif',
+            }}
+            role="status"
+            aria-label="Partner portal loading"
+          >
+            <div
+              style={{
+                width: '48px',
+                height: '48px',
+                borderRadius: '50%',
+                border: '3px solid #E8F5E9',
+                borderTopColor: '#1B5E20',
+                animation: 'spin 0.8s linear infinite',
+              }}
+              aria-hidden="true"
+            />
+            <style>{`
+              @keyframes spin {
+                from { transform: rotate(0deg); }
+                to   { transform: rotate(360deg); }
+              }
+            `}</style>
+          </div>
+        }
+      />
+
     </HelmetProvider>
   </React.StrictMode>
 );
