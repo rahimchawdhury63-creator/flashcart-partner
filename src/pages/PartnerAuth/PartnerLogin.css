@@ -1,0 +1,76 @@
+/**
+ * =============================================================================
+ * FLASHCART PARTNER — Partner Login Styles
+ * =============================================================================
+ *
+ * Imports base auth styles from customer Login.css concept,
+ * adds partner-specific branding tweaks.
+ *
+ * Developer: Rizwan Rahim Chowdhury
+ * =============================================================================
+ */
+
+/* Import all the same base auth styles */
+@import '../../../auth/auth-base.css';
+
+/* --- Partner Badge --- */
+.partner-badge {
+  display: inline-block;
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+  color: var(--color-white);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-lighter));
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-3);
+  box-shadow: var(--shadow-sm);
+}
+
+/* --- Partner Features List (in decoration sidebar) --- */
+.partner-features-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-top: var(--space-8);
+  width: 100%;
+  max-width: 400px;
+}
+
+.partner-feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius-xl);
+  text-align: left;
+  color: var(--color-white);
+  transition: transform var(--transition-fast);
+}
+
+.partner-feature-item:hover {
+  transform: translateX(4px);
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.partner-feature-item svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--color-accent-warm);
+}
+
+.partner-feature-title {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  margin-bottom: var(--space-0-5);
+}
+
+.partner-feature-text {
+  font-size: var(--text-xs);
+  opacity: 0.85;
+  line-height: var(--leading-snug);
+}
