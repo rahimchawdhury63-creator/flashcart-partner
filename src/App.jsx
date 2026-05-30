@@ -36,7 +36,8 @@ const NotificationsPage = lazy(() => import('./pages/NotificationsPage'))
 const LoginPage = lazy(() => import('./pages/LoginPage'))
 const SignupPage = lazy(() => import('./pages/SignupPage'))
 
-// Restore deep-links after the Cloudflare 404.html redirect.
+// Legacy safety net for any cached sessionStorage redirect. Routing now uses
+// public/_redirects (200 rewrite), so this is a no-op for fresh sessions.
 function RedirectHandler() {
   const navigate = useNavigate()
   useEffect(() => {
