@@ -6,12 +6,12 @@ import React, { createContext, useState, useEffect, useRef, useCallback } from '
 import { useAuth } from '../hooks/useAuth'
 import { listenForOrders, fetchOrders, markOrderSeen } from '../utils/partnerService'
 import {
-  playOrderAlert,
   updateTabTitle,
   startTitleBlink,
   stopTitleBlink,
   showNativeNotification,
 } from '../utils/notifications'
+import { armAlarm, startAlarm, stopAlarm } from '../utils/alarm'
 
 export const OrderContext = createContext(null)
 
@@ -54,12 +54,13 @@ export function OrderProvider({ children }) {
       setLatestNew(newOnes[0] || null)
 
       // Fire alerts for orders we haven't alerted on yet.
-      // Skip the very first snapshot (initial load) so we don't chime for old orders.
+      // Skip the very first snapshot (initial load) so we don't ring for old orders.
       if (!firstSnapshot.current) {
+        let hasBrandNew = false
         for (const o of newOnes) {
           if (!seenIds.current.has(o.id)) {
             seenIds.current.add(o.id)
-            playOrderAlert()
+            hasBrandNew = true
             showNativeNotification('New Order Received!', {
               body: `Order ${o.orderId || ''} — ৳${o.total} from ${o.customerName}`,
               url: `/orders/${o.id}`,
@@ -68,6 +69,9 @@ export function OrderProvider({ children }) {
             reloadOrders()
           }
         }
+        // Start the CONTINUOUS alarm if there are any unseen orders. It keeps
+        // ringing until the partner acknowledges (stopped in the effect below).
+        if (hasBrandNew && newOnes.length > 0) startAlarm()
       } else {
         // Seed seenIds so existing new orders don't re-alert later.
         newOnes.forEach((o) => seenIds.current.add(o.id))
@@ -77,11 +81,24 @@ export function OrderProvider({ children }) {
     return () => unsub && unsub()
   }, [user, reloadOrders])
 
-  // Keep the tab title badge + blink in sync with the unseen count.
+  // Arm (unlock) the alarm audio on the first user gesture, once on mount.
+  useEffect(() => {
+    armAlarm()
+  }, [])
+
+  // Keep the tab title badge + blink + continuous alarm in sync with the count.
   useEffect(() => {
     updateTabTitle(newCount)
-    if (newCount > 0) startTitleBlink(newCount)
-    else stopTitleBlink()
+    if (newCount > 0) {
+      startTitleBlink(newCount)
+      // If there are unseen orders, make sure the alarm is ringing. This also
+      // re-starts the alarm when the partner returns to the tab with pending orders.
+      startAlarm()
+    } else {
+      stopTitleBlink()
+      // No unseen orders -> stop ringing.
+      stopAlarm()
+    }
     return () => stopTitleBlink()
   }, [newCount])
 
@@ -92,15 +109,21 @@ export function OrderProvider({ children }) {
     return () => document.removeEventListener('visibilitychange', onVisible)
   }, [reloadOrders])
 
+  // Manually silence the alarm without marking orders seen (e.g. a "Stop sound"
+  // button). The badge stays until orders are actually viewed.
+  const silenceAlarm = useCallback(() => stopAlarm(), [])
+
   // Mark a single order as seen (clears the isNew flag in Realtime DB).
   const acknowledge = useCallback(async (orderId) => {
     if (!user) return
+    stopAlarm() // stop ringing instantly for responsiveness
     await markOrderSeen(user.uid, orderId)
   }, [user])
 
   // Mark ALL currently-new orders as seen.
   const acknowledgeAll = useCallback(async () => {
     if (!user) return
+    stopAlarm()
     const ids = Object.entries(liveOrders).filter(([, v]) => v?.isNew).map(([id]) => id)
     await Promise.all(ids.map((id) => markOrderSeen(user.uid, id)))
   }, [user, liveOrders])
@@ -109,7 +132,7 @@ export function OrderProvider({ children }) {
     <OrderContext.Provider
       value={{
         orders, liveOrders, newCount, latestNew, loading,
-        reloadOrders, acknowledge, acknowledgeAll,
+        reloadOrders, acknowledge, acknowledgeAll, silenceAlarm,
       }}
     >
       {children}
