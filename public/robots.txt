@@ -1,0 +1,3 @@
+# Partner portal is a private dashboard — discourage indexing.
+User-agent: *
+Disallow: /
