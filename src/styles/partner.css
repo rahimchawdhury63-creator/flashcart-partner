@@ -1,0 +1,11 @@
+/* partner.css — Master stylesheet for the Partner Portal.
+   Imports shared design tokens + base modules, then partner dashboard styles. */
+
+@import './variables.css';
+@import './typography.css';
+@import './layout.css';
+@import './components.css';
+@import './animations.css';
+@import './fabric-overrides.css';
+@import './responsive.css';
+@import './dashboard.css';
