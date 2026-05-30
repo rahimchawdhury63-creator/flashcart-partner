@@ -1,78 +1,86 @@
-# FlashCart — Bangladesh's All-in-One Delivery Platform
+# FlashCart — Partner Portal (flashcart-partner)
 
-A free, cash-on-delivery, all-in-one delivery & e-commerce platform that gives local
-Bangladeshi businesses their own SEO-optimized landing page and ordering system at zero cost.
+Business management dashboard for FlashCart stores in Bangladesh.
+This repository is **Application 2 — FlashCart Partner Portal**.
 
+- **Live URL (target):** https://partner.flashcart.bsdc.info.bd
+- **Stack:** React 18 + Vite + React Router v6 + Firebase + Leaflet + Recharts + OneSignal
+- **Hosting:** Cloudflare Pages (free)
 - **Developer:** Rizwan Rahim Chowdhury
 - **Powered by:** [Bangladesh Software Development Community](https://www.bsdc.info.bd)
 
----
-
-## Two applications (separate repos, shared Firebase)
-
-| App | Folder | Target URL | Purpose |
-|-----|--------|------------|---------|
-| **Customer Portal** | [`flashcart-main/`](./flashcart-main) | https://flashcart.bsdc.info.bd | Browse stores, order with COD |
-| **Partner Portal** | [`flashcart-partner/`](./flashcart-partner) | https://partner.flashcart.bsdc.info.bd | Manage store, orders, real-time alerts |
-
-Each folder is an independent Vite + React 18 project. See each folder's `README.md`
-for feature lists and deployment steps, and [`FIREBASE_RULES.md`](./FIREBASE_RULES.md)
-for the shared security rules and auth setup.
+> Shares the **same Firebase project** as the customer app (`flashcart-main`).
 
 ---
 
-## Tech stack (both apps)
+## The notification system (the core feature)
 
-- React 18 + Vite + React Router v6
-- Firebase (Auth, Firestore, Realtime Database)
-- Leaflet + OpenStreetMap + Nominatim (free maps/geocoding, no API key)
-- ImgBB for image hosting
-- react-helmet-async for SEO (JSON-LD, OG, canonical, hreflang)
-- 3-language system (Bangla-English mix / Bangla / English)
-- PWA-ready, mobile-first, SVG icons only (no emojis)
-- Partner: OneSignal web push + Recharts + full notification stack
+Partners use Android phones — they must never miss an order. The full alert stack:
 
----
+1. **OneSignal push** — When a customer places an order, the customer app calls the
+   OneSignal REST API targeting this partner (by saved player id, fallback by uid).
+   Works when the browser is closed or the phone is locked.
+2. **Realtime DB listener** — `OrderContext` subscribes to `orders/{partnerId}` and
+   fires instantly on a new order.
+3. **Web Audio chime** — a two-tone alert generated in-browser (no audio files).
+4. **Tab title badge + blink** — `(3) নতুন অর্ডার | FlashCart Partner`.
+5. **Native system notification** — clicking it opens the order.
+6. **Sticky banner** — `NotificationBanner` stays until new orders are viewed.
+7. **Page Visibility API** — refreshes orders when the partner returns to the tab.
+8. **Service worker** (`public/sw.js`) — shows background notifications on push and
+   focuses/opens the right order on click.
+9. **Permission prompt loop** — `NotificationContext` re-asks every 30s until enabled,
+   with a clear explanation and Android instructions if blocked.
+10. **PWA** — installable to the home screen (`manifest.json`), works like a native app.
 
-## The end-to-end order + notification flow
-
-```
-Customer (flashcart-main)                 Partner (flashcart-partner)
-─────────────────────────                 ───────────────────────────
-Place order at /checkout
-   │
-   ├─► Firestore  orders/{id}             ◄── reads full order history
-   │
-   ├─► Realtime DB orders/{partnerId}/{id}  ──► live listener fires:
-   │     (isNew: true)                          • Web Audio chime
-   │                                            • tab-title badge + blink
-   │                                            • native system notification
-   │                                            • sticky in-app banner
-   │
-   └─► OneSignal REST push  ───────────────►  background push
-                                                (works when app closed /
-                                                 phone locked) + service worker
-```
-
-When the partner opens the order, `isNew` is cleared and all badges reset.
+### How the two apps connect
+- Customer checkout → writes to Firestore `orders` **and** Realtime DB
+  `orders/{partnerId}/{orderId}` (`isNew: true`) **and** sends a OneSignal push.
+- Partner dashboard → live listener picks it up, fires the whole alert stack,
+  and clears `isNew` once the partner opens the order.
 
 ---
 
-## Build & deploy (no CLI on the device required)
+## What's implemented
 
-Both apps deploy to **Cloudflare Pages** from GitHub:
-- **Build command:** `npm run build`
-- **Output directory:** `dist`
-- SPA deep-links handled by each app's `public/404.html` (no `_redirects` file).
+- **Auth** — Google + email/password, partner-role tagging, OneSignal external-id link.
+- **Setup Wizard** (`/guide`) — 4-step onboarding (basics → category/contact → location → logo/banner).
+- **Dashboard** — KPIs (today's revenue, total orders, rating, profile score), 7-day
+  sales chart (Recharts), top-selling items, recent orders, quick actions.
+- **Orders** — live list with new-order highlighting, status filter, search, CSV export,
+  detail page with accept/reject + status flow + printable invoice.
+- **Menu** — categories + items, add/edit form (Bangla + English), ImgBB image upload,
+  availability toggle, delete.
+- **Settings** — store info, logo/banner, category, contact, location (Leaflet picker),
+  delivery radius/fee + all-Bangladesh toggle, day-by-day hours, open/accepting toggles.
+- **Analytics & SEO** — SEO score (0-100) with actionable tips, Google SERP preview,
+  keyword suggestions, sales chart.
+- **Certificates** — Canvas-generated downloadable milestone certificates (100/500/1000
+  orders) + business badges.
+- **Reviews** — view and reply.
+- **Notifications page** — permission status, test alert, explanation.
+- **3-language system** + PWA + Cloudflare SPA routing (`404.html`).
 
 ---
 
-## Status
+## Deploy to Cloudflare Pages (Android tablet, no CLI)
 
-A strong, **deployable functional core of both apps** is complete and builds cleanly.
-Planned next iterations: Cloudflare Pages Function for dynamic `sitemap-stores.xml` +
-edge meta injection, admin panel (password-gated), and extra customer features
-(favorites, flash deals, refer & earn, loyalty points).
+1. Push this folder to the GitHub repo `flashcart-partner`.
+2. Cloudflare dashboard → **Workers & Pages → Create → Pages → Connect to Git**.
+3. Build settings:
+   - **Build command:** `npm run build`
+   - **Build output directory:** `dist`
+4. Add custom domain `partner.flashcart.bsdc.info.bd`.
+5. `public/sw.js` and `public/OneSignalSDKWorker.js` are served from the site root
+   automatically (required for web push).
+
+### OneSignal setup
+- In the OneSignal dashboard, set the site URL to `https://partner.flashcart.bsdc.info.bd`.
+- Ensure the App ID matches: `289acc0a-9fde-435e-aad7-aca9c0aca98d`.
+
+> Security note: the REST API key currently lives in client code for simplicity.
+> For production, move the push call (`orderNotify.js` in the customer app) into a
+> Cloudflare Pages Function and keep the key as a secret env var.
 
 ---
 

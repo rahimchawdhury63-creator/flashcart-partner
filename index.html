@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="bn">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#1A6B3C" />
+
+    <!-- Partner portal default meta. This is a private dashboard, so we discourage indexing. -->
+    <title>FlashCart Partner — Business Dashboard</title>
+    <meta name="description" content="Manage your FlashCart store: orders, menu, settings, analytics and real-time order notifications." />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="canonical" href="https://partner.flashcart.bsdc.info.bd/" />
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+
+    <!-- Fonts: Inter + Hind Siliguri (Bangla). font-display:swap avoids render block. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Leaflet CSS (store location picker). -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+
+    <!--
+      OneSignal Web Push SDK (Partner Portal ONLY).
+      Loaded deferred; initialized in src/onesignal.js after the app mounts.
+    -->
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  </head>
+  <body>
+    <noscript>
+      <h1>FlashCart Partner Dashboard</h1>
+      <p>Please enable JavaScript to manage your FlashCart store.</p>
+    </noscript>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
